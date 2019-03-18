@@ -1,4 +1,19 @@
 <?php
+
+namespace QuickAddNew;
+
+use Exception;
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Extension;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\FormField;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Security\Security;
+use SilverStripe\View\Requirements;
+
 /**
  * QuickAddNewExtension
  *
@@ -24,7 +39,7 @@ class QuickAddNewExtension extends Extension
 
 
     /**
-     * @var Function
+     * @var callable
      **/
     protected $sourceCallback;
 
@@ -53,7 +68,7 @@ class QuickAddNewExtension extends Extension
      * Tell this form field to apply the add new UI and fucntionality
      *
      * @param string $class - the class name of the object being managed on the relationship
-     * @param Function $sourceCallback - the function called to repopulate the field's source array
+     * @param callable $sourceCallback - the function called to repopulate the field's source array
      * @param FieldList $fields - Fields to create the object via dialog form - defaults to the object's getAddNewFields() method
      * @param RequiredFields $required - to create the validator for the dialog form
      * @param Boolean $isFrontend - If this is set to true, the css classes for the CMS ui will not be set of the form elements
@@ -78,13 +93,14 @@ class QuickAddNewExtension extends Extension
             return $this->owner;
         }
 
-        Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-        Requirements::javascript(THIRDPARTY_DIR . '/jquery-entwine/dist/jquery.entwine-dist.js');
-        Requirements::javascript(THIRDPARTY_DIR . '/jquery-ui/jquery-ui.js');
-        Requirements::javascript(QUICKADDNEW_MODULE . '/javascript/quickaddnew.js');
-        Requirements::css(THIRDPARTY_DIR . '/jquery-ui-themes/smoothness/jquery-ui.css');
-        Requirements::css(QUICKADDNEW_MODULE . '/css/quickaddnew.css');
-        Requirements::add_i18n_javascript(QUICKADDNEW_MODULE . '/javascript/lang');
+        Requirements::javascript('silverstripe/admin:thirdparty/jquery/jquery.js');
+        Requirements::javascript('silverstripe/admin:thirdparty/jquery-entwine/dist/jquery.entwine-dist.js');
+        Requirements::javascript('silverstripe/admin:thirdparty/jquery-ui/jquery-ui.js');
+
+        Requirements::javascript('sheadawson/quickaddnew:javascript/quickaddnew.js');
+        Requirements::css('silverstripe/admin:thirdparty/jquery-ui-themes/smoothness/jquery-ui.css');
+        Requirements::css('sheadawson/quickaddnew:css/quickaddnew.css');
+        Requirements::add_i18n_javascript('sheadawson/quickaddnew:javascript/lang');
         if (!$fields) {
             if (singleton($class)->hasMethod('getAddNewFields')) {
                 $fields = singleton($class)->getAddNewFields();
@@ -180,7 +196,7 @@ class QuickAddNewExtension extends Extension
      **/
     public function doAddNew($data, $form)
     {
-        $obj = Object::create($this->addNewClass);
+        $obj = Injector::inst()->create($this->addNewClass);
         if (!$obj->canCreate()) {
             return Security::permissionFailure(Controller::curr(), "You don't have permission to create this object");
         }

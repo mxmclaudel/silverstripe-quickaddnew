@@ -1,9 +1,9 @@
 ---
 Name: quickaddnew
 ---
-DropdownField:
+SilverStripe\Forms\DropdownField:
   extensions:
-    ['QuickAddNewExtension']
-ListboxField:
+    - QuickAddNew\QuickAddNewExtension
+SilverStripe\Forms\ListboxField:
   extensions:
-    ['QuickAddNewExtension']
+    - QuickAddNew\QuickAddNewExtension
