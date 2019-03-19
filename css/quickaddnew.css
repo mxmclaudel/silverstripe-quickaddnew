@@ -14,7 +14,13 @@
 	vertical-align: top;
 }
 
-.quickaddnew-dialog{
+.quickaddnew-dialog {
 	max-height: 600px;
 	overflow: auto;
-}
+	height: unset !important;
+  }
+  
+  .quickaddnew-dialog .tab-pane {
+	display: block;
+  }
+  
